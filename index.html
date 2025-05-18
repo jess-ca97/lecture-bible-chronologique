@@ -71,8 +71,8 @@
       plan.push(...plan.slice(0, 365 - plan.length));
     }
 
-    // Date de départ du plan : aujourd'hui (13 mai 2025)
-    const startDate = new Date(2025, 4, 13); // mois = 4 car JavaScript compte les mois à partir de 0
+    // Date de départ mise à jour : 18 mai 2025
+    const startDate = new Date(2025, 4, 18); // mois 4 = mai (indexé à 0)
     const today = new Date();
     const diff = Math.floor((today - startDate) / (1000 * 60 * 60 * 24));
     const dayNumber = diff + 1;
@@ -82,7 +82,7 @@
     const btn = document.getElementById("markDoneBtn");
 
     if (dayNumber < 1) {
-      readingBlock.innerHTML = "<p>Le plan commence aujourd’hui. Revenez un peu plus tard.</p>";
+      readingBlock.innerHTML = "<p>Le plan commence le 18 mai 2025. Revenez bientôt !</p>";
       btn.style.display = "none";
     } else if (dayNumber > 365) {
       readingBlock.innerHTML = "<p>🎉 Vous avez terminé le plan de lecture !</p>";
