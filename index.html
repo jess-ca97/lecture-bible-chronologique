@@ -3,19 +3,19 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Plan Biblique Chronologique</title>
+  <title>Lecture Biblique – Jour 1</title>
   <style>
     body {
       font-family: Arial, sans-serif;
-      margin: 2rem;
       background: #f2f2f2;
+      margin: 2rem;
       color: #333;
     }
     .container {
-      background: white;
-      padding: 2rem;
+      background: #fff;
       border-radius: 10px;
-      max-width: 600px;
+      padding: 2rem;
+      max-width: 800px;
       margin: auto;
       box-shadow: 0 2px 10px rgba(0,0,0,0.1);
     }
@@ -23,92 +23,99 @@
       text-align: center;
       color: #005b96;
     }
-    .reading {
+    table {
+      width: 100%;
+      border-collapse: collapse;
       margin-top: 1.5rem;
     }
-    .done {
+    th, td {
+      padding: 0.75rem;
+      border-bottom: 1px solid #ddd;
+      vertical-align: top;
+    }
+    th {
+      background: #f9f9f9;
+    }
+    .progress {
+      text-align: center;
       margin-top: 1rem;
-    }
-    button {
-      padding: 0.6rem 1rem;
-      font-size: 1rem;
-      border: none;
-      background: #005b96;
-      color: white;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-    button:disabled {
-      background: #aaa;
-    }
-    a {
+      font-weight: bold;
       color: #005b96;
-      text-decoration: none;
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <h1>Lecture Biblique Chronologique</h1>
-    <div class="reading" id="readingBlock">
-      <p><strong>Jour :</strong> <span id="dayNumber"></span> / 365</p>
-      <p><strong>Lecture (Français) :</strong> <span id="readingText"></span></p>
-      <p><a href="#" target="_blank" id="linkFR">Lire sur YouVersion (FR)</a></p>
-      <p><a href="#" target="_blank" id="linkPT">Lire sur YouVersion (PT)</a></p>
-    </div>
-    <div class="done">
-      <button id="markDoneBtn">Marquer comme lu</button>
-      <p id="statusText" style="margin-top: 0.5rem;"></p>
-    </div>
+    <h1>Lecture Biblique Chronologique – Jour 1</h1>
+    <p style="text-align:center;">Passage : Genèse 1 à 3</p>
+    <div class="progress" id="progressText">Progression : 0%</div>
+    <table>
+      <thead>
+        <tr>
+          <th>Lu ?</th>
+          <th>Référence</th>
+          <th>Texte</th>
+        </tr>
+      </thead>
+      <tbody id="versesTable">
+        <!-- Les versets seront insérés ici dynamiquement -->
+      </tbody>
+    </table>
   </div>
 
   <script>
-    const plan = [
-      "Genèse 1-3", "Genèse 4-7", "Genèse 8-11", "Job 1-5", "Job 6-9",
-      "Job 10-13", "Job 14-17", "Job 18-21", "Job 22-25", "Job 26-29"
+    const verses = [
+      ["Genèse 1:1", "Au commencement, Dieu créa les cieux et la terre."],
+      ["Genèse 1:2", "La terre était informe et vide; il y avait des ténèbres à la surface de l’abîme."],
+      ["Genèse 1:3", "Dieu dit: Que la lumière soit! Et la lumière fut."],
+      ["Genèse 1:4", "Dieu vit que la lumière était bonne; et Dieu sépara la lumière d’avec les ténèbres."],
+      ["Genèse 1:5", "Dieu appela la lumière jour, et il appela les ténèbres nuit."],
+      ["Genèse 2:1", "Ainsi furent achevés les cieux et la terre, et toute leur armée."],
+      ["Genèse 2:2", "Dieu acheva au septième jour son œuvre, et il se reposa au septième jour de toute son œuvre."],
+      ["Genèse 2:3", "Dieu bénit le septième jour, et il le sanctifia."],
+      ["Genèse 3:1", "Le serpent était le plus rusé de tous les animaux des champs."],
+      ["Genèse 3:2", "La femme répondit au serpent: Nous mangeons du fruit des arbres du jardin."],
+      ["Genèse 3:3", "Mais quant au fruit de l’arbre qui est au milieu du jardin, Dieu a dit: Vous n’en mangerez point."]
     ];
-    while (plan.length < 365) {
-      plan.push(...plan.slice(0, 365 - plan.length));
+
+    const table = document.getElementById("versesTable");
+    const progressText = document.getElementById("progressText");
+
+    function updateProgress() {
+      const checkboxes = document.querySelectorAll("input[type='checkbox']");
+      const checked = Array.from(checkboxes).filter(c => c.checked).length;
+      const total = checkboxes.length;
+      const percent = Math.round((checked / total) * 100);
+      progressText.textContent = `Progression : ${percent}%`;
     }
 
-    // Date de départ mise à jour : 18 mai 2025
-    const startDate = new Date(2025, 4, 18); // mois 4 = mai (indexé à 0)
-    const today = new Date();
-    const diff = Math.floor((today - startDate) / (1000 * 60 * 60 * 24));
-    const dayNumber = diff + 1;
+    verses.forEach(([ref, text], index) => {
+      const tr = document.createElement("tr");
+      const isChecked = localStorage.getItem(`verse-${index}`) === "1";
 
-    const readingBlock = document.getElementById("readingBlock");
-    const statusText = document.getElementById("statusText");
-    const btn = document.getElementById("markDoneBtn");
-
-    if (dayNumber < 1) {
-      readingBlock.innerHTML = "<p>Le plan commence le 18 mai 2025. Revenez bientôt !</p>";
-      btn.style.display = "none";
-    } else if (dayNumber > 365) {
-      readingBlock.innerHTML = "<p>🎉 Vous avez terminé le plan de lecture !</p>";
-      btn.style.display = "none";
-    } else {
-      document.getElementById("dayNumber").textContent = dayNumber;
-      const reading = plan[dayNumber - 1];
-      document.getElementById("readingText").textContent = reading;
-
-      const youVersionFR = "https://www.bible.com/fr/bible/93/GEN.1.LSG";
-      const youVersionPT = "https://www.bible.com/pt/bible/212/GEN.1.ARA";
-      document.getElementById("linkFR").href = youVersionFR;
-      document.getElementById("linkPT").href = youVersionPT;
-
-      const key = `bible-read-day-${dayNumber}`;
-      if (localStorage.getItem(key) === "done") {
-        btn.disabled = true;
-        statusText.textContent = "Déjà marqué comme lu.";
-      }
-
-      btn.addEventListener("click", () => {
-        localStorage.setItem(key, "done");
-        statusText.textContent = "Marqué comme lu.";
-        btn.disabled = true;
+      const tdCheck = document.createElement("td");
+      const checkbox = document.createElement("input");
+      checkbox.type = "checkbox";
+      checkbox.checked = isChecked;
+      checkbox.addEventListener("change", () => {
+        localStorage.setItem(`verse-${index}`, checkbox.checked ? "1" : "0");
+        updateProgress();
       });
-    }
+      tdCheck.appendChild(checkbox);
+
+      const tdRef = document.createElement("td");
+      tdRef.textContent = ref;
+
+      const tdText = document.createElement("td");
+      tdText.textContent = text;
+
+      tr.appendChild(tdCheck);
+      tr.appendChild(tdRef);
+      tr.appendChild(tdText);
+      table.appendChild(tr);
+    });
+
+    updateProgress();
   </script>
 </body>
 </html>
